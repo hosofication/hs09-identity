@@ -1,0 +1,228 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>IDENTITY</title>
+  <style>
+    @font-face {
+      font-family: 'Averust';
+      src: local('Averust'), local('Averust-Regular');
+    }
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Averust', serif;
+      background: #000;
+      color: #fff;
+    }
+    #landing {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      background-color: #000;
+    }
+    #landing h1 {
+      font-size: 6rem;
+      letter-spacing: 8px;
+      margin: 0;
+      text-transform: uppercase;
+    }
+    #landing p {
+      font-size: 1rem;
+      margin-top: 1rem;
+      animation: blink 1.2s infinite;
+      font-family: monospace;
+    }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    #desktop {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background: #000;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+    .taskbar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 30px;
+      width: 100%;
+      background-color: #111;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      font-size: 0.9rem;
+      font-family: monospace;
+    }
+    .desktop-icons {
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 2rem;
+    }
+    .icon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      color: white;
+      font-family: monospace;
+    }
+    .icon svg {
+      width: 48px;
+      height: 48px;
+    }
+    .icon span {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+    }
+    #newsApp, #placeholderApp {
+      display: none;
+      background: #fff;
+      color: #000;
+      width: 100%;
+      height: 100%;
+      padding: 2rem;
+      box-sizing: border-box;
+      font-family: monospace;
+      overflow-y: auto;
+    }
+    /* Center news content */
+    .news-container {
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+    }
+    .news-container img {
+      width: 100%;
+      margin: 1rem 0;
+      border: 1px solid #000;
+    }
+    .news-container button, .placeholder-content button {
+      margin-top: 1rem;
+      padding: 0.5rem 1rem;
+      background: #000;
+      color: #fff;
+      border: 1px solid #000;
+      cursor: pointer;
+      font-family: monospace;
+    }
+    .news-container button:hover, .placeholder-content button:hover {
+      background: #222;
+    }
+    iframe.audio-frame {
+      display: none;
+    }
+    /* Placeholder app content */
+    .placeholder-content {
+      max-width: 600px;
+      margin: auto;
+      text-align: center;
+      padding-top: 20%;
+      color: #000;
+    }
+  </style>
+</head>
+<body>
+  <div id="landing" onclick="showDesktop()">
+    <h1>IDENTITY</h1>
+    <p>click to continue</p>
+  </div>
+
+  <div id="desktop">
+    <div class="desktop-icons">
+      <div class="icon" onclick="openNews()">
+        <!-- Newspaper icon SVG -->
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="12" width="48" height="40" fill="none" stroke="#fff" stroke-width="2"/><line x1="16" y1="20" x2="48" y2="20" stroke="#fff" stroke-width="2"/><line x1="16" y1="28" x2="48" y2="28" stroke="#fff" stroke-width="2"/><line x1="16" y1="36" x2="48" y2="36" stroke="#fff" stroke-width="2"/></svg>
+        <span>NEWS</span>
+      </div>
+      <div class="icon" onclick="openPlaceholder('ARCHIVE')">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="12" y="16" width="40" height="32" fill="none" stroke="#fff" stroke-width="2"/><line x1="12" y1="24" x2="52" y2="24" stroke="#fff" stroke-width="2"/><line x1="20" y1="32" x2="44" y2="32" stroke="#fff" stroke-width="2"/></svg>
+        <span>ARCHIVE</span>
+      </div>
+      <div class="icon" onclick="openPlaceholder('GALLERY')">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="8" y="12" width="48" height="40" fill="none" stroke="#fff" stroke-width="2"/><circle cx="24" cy="28" r="4" fill="none" stroke="#fff" stroke-width="2"/><polyline points="12,48 24,36 36,48 52,32" fill="none" stroke="#fff" stroke-width="2"/></svg>
+        <span>GALLERY</span>
+      </div>
+      <div class="icon" onclick="openPlaceholder('DECRYPT')">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><circle cx="32" cy="32" r="20" fill="none" stroke="#fff" stroke-width="2"/><line x1="32" y1="16" x2="32" y2="48" stroke="#fff" stroke-width="2"/><line x1="16" y1="32" x2="48" y2="32" stroke="#fff" stroke-width="2"/></svg>
+        <span>DECRYPT</span>
+      </div>
+      <div class="icon" onclick="openPlaceholder('PROTOCOL')">
+        <svg viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg"><rect x="16" y="16" width="32" height="32" fill="none" stroke="#fff" stroke-width="2"/><polyline points="16,24 32,40 48,24" fill="none" stroke="#fff" stroke-width="2"/></svg>
+        <span>PROTOCOL</span>
+      </div>
+    </div>
+    <div class="taskbar">start   |   04:11:25</div>
+  </div>
+
+  <div id="newsApp">
+    <div class="news-container">
+      <h1>NEWS BULLETIN: DR. HS09 MISSING</h1>
+      <p><strong>Date:</strong> April 11, 2025</p>
+      <p><strong>Location:</strong> Noctisyn Core Sector</p>
+      <p><strong>Subject:</strong> Dr. HS09, lead researcher in synthetic consciousness program</p>
+      <hr>
+      <p>At approximately 04:11:25 local time, all monitoring systems in Isolation Unit 7A reported a sudden loss of signal from Dr. HS09. Telemetry logs indicated erratic neural interface spikes moments prior to disappearance.</p>
+      <p>Dr. HS09, a prototype clone developed for advanced identity transference studies, exhibited anomalous behavior across recent evaluation sessions. Unauthorized data transmissions were detected seconds before loss of contact.</p>
+      <p>Surveillance footage outside Isolation Unit 7A shows a brief glitch artifact: a distorted silhouette at the frame’s edge. Attempts to retrieve high-resolution footage have been thwarted by data corruption.</p>
+      <p>Environmental controls in the chamber fluctuated unexpectedly, prompting an emergency containment alert. Life-support systems maintained minimal viability, but bio-sign transmissions ceased.</p>
+      <p>The final audio log contains fragmented phrases: “I see beyond... cannot return... identity dissolves... find the truth...”. The rest remains unintelligible due to signal distortion.</p>
+      <p>Search protocols across Noctisyn stations and network nodes reveal no trace of Dr. HS09. Speculation suggests possible dimensional dislocation or extraction by unknown entities.</p>
+      <p><em>[REDACTED]</em> materials reference potential interference by rogue AI subroutine “Noctisyn Echo,” intercepting neural mesh communications. Investigations continue.</p>
+      <p>Dr. HS09 should be considered unpredictable and possibly operating outside original parameters. Any encounter must follow strict protocol. Report anomalies immediately.</p>
+      <img src="https://i.pinimg.com/originals/d0/58/64/d0586467abfc567a705a842cd2d697ef.jpg" alt="Winter caught">
+      <!-- YouTube audio loop via iframe-->
+      <iframe class="audio-frame" src="https://www.youtube.com/embed/QSXv5OGQNnk?autoplay=1&loop=1&playlist=QSXv5OGQNnk"></iframe>
+      <button onclick="goBack()">Go Back</button>
+    </div>
+  </div>
+
+  <div id="placeholderApp">
+    <div class="placeholder-content">
+      <h1 id="placeholderTitle"></h1>
+      <p>Coming Soon...</p>
+      <button onclick="goBack()">Go Back</button>
+    </div>
+  </div>
+
+  <script>
+    function showDesktop() {
+      document.getElementById('landing').style.display = 'none';
+      document.getElementById('desktop').style.display = 'block';
+    }
+    function openNews() {
+      document.getElementById('desktop').style.display = 'none';
+      document.getElementById('newsApp').style.display = 'block';
+    }
+    function openPlaceholder(appName) {
+      document.getElementById('placeholderTitle').innerText = appName;
+      document.getElementById('desktop').style.display = 'none';
+      document.getElementById('placeholderApp').style.display = 'block';
+    }
+    function goBack() {
+      document.getElementById('newsApp').style.display = 'none';
+      document.getElementById('placeholderApp').style.display = 'none';
+      document.getElementById('desktop').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
