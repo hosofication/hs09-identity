@@ -1,0 +1,2765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HOSO's Computer (2010)</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  * { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+    -webkit-tap-highlight-color: transparent;
+    cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><rect fill="%23ff00aa" x="4" y="4" width="8" height="8"/><rect fill="%23000000" x="6" y="6" width="4" height="4"/></svg>') 8 8, auto;
+  }
+  
+  :root {
+    --primary: #ff00aa;
+    --secondary: #00ddff;
+    --accent: #aa00ff;
+    --pink: #ff4eb5;
+    --blue: #00ccff;
+    --purple: #cc00ff;
+    --black: #000000;
+    --white: #ffffff;
+    --green: #00ff66;
+    --red: #ff3366;
+    --background: #0a0a0a;
+    --surface: rgba(20, 0, 30, 0.9);
+    --surface-alt: rgba(0, 20, 30, 0.9);
+    --border: rgba(255, 0, 170, 0.6);
+    --text: #ffffff;
+    --text-alt: #00ddff;
+    --glow: 0 0 10px rgba(255, 0, 170, 0.7);
+    --transition: all 0.3s cubic-bezier(0.22, 0.61, 0.36, 1);
+  }
+  
+  html, body { 
+    width: 100%; 
+    height: 100%; 
+    overflow: hidden; 
+    background: var(--background); 
+    color: var(--text); 
+    font-family: 'VT323', monospace;
+    transition: var(--transition);
+    image-rendering: pixelated;
+  }
+
+  /* ===== LOCK SCREEN ===== */
+  #lockScreen { 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    align-items: center; 
+    width: 100%; 
+    height: 100%; 
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.9)), 
+                url('https://i.imgur.com/qnfgYCo.png') no-repeat center center;
+    background-size: cover;
+    position: relative;
+    overflow: hidden;
+    z-index: 200;
+    transition: opacity 1s ease;
+    image-rendering: pixelated;
+  }
+  
+  .lock-screen-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 30px;
+    border: 2px solid var(--primary);
+    background: rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 20px var(--primary);
+    width: 90%;
+    max-width: 400px;
+  }
+  
+  .user-profile {
+    text-align: center;
+    margin-bottom: 2rem;
+    z-index: 10;
+  }
+  
+  .user-avatar {
+    width: 100px;
+    height: 100px;
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 15px var(--primary);
+    margin-bottom: 1rem;
+    background: url('https://i.imgur.com/qdHBmox.png') no-repeat center center;
+    background-size: cover;
+    position: relative;
+    image-rendering: pixelated;
+  }
+  
+  .user-name {
+    font-size: 1.8rem;
+    color: var(--text);
+    text-shadow: 0 0 5px var(--primary);
+    margin-bottom: 0.5rem;
+    font-family: 'Press Start 2P', cursive;
+  }
+  
+  .user-title {
+    font-size: 1rem;
+    color: var(--green);
+    letter-spacing: 1px;
+  }
+  
+  .login-form {
+    background: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    border: 2px solid var(--green);
+    width: 100%;
+    z-index: 10;
+  }
+  
+  .password-input {
+    width: 100%;
+    padding: 12px;
+    background: rgba(30, 0, 30, 0.8);
+    border: 2px solid var(--primary);
+    color: var(--text);
+    margin-bottom: 1rem;
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    text-align: center;
+    image-rendering: pixelated;
+  }
+  
+  .password-input:focus {
+    outline: none;
+    border-color: var(--green);
+    box-shadow: 0 0 10px var(--green);
+  }
+  
+  .login-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--black);
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .login-btn:hover {
+    background: var(--primary);
+    color: var(--black);
+    box-shadow: 0 0 15px var(--primary);
+  }
+  
+  .login-message {
+    margin-top: 1rem;
+    color: var(--primary);
+    text-align: center;
+    min-height: 20px;
+    font-size: 1rem;
+  }
+  
+  .password-hint {
+    margin-top: 10px;
+    color: var(--blue);
+    font-size: 0.9rem;
+    text-align: center;
+  }
+  
+  .lock-screen-icons {
+    position: absolute;
+    bottom: 20px;
+    display: flex;
+    gap: 20px;
+  }
+  
+  .lock-icon {
+    color: var(--primary);
+    font-size: 1.5rem;
+    animation: blink 2s infinite;
+    text-shadow: 0 0 5px var(--primary);
+  }
+  
+  .lock-icon:nth-child(2) {
+    animation-delay: 0.3s;
+    color: var(--green);
+  }
+  
+  .lock-icon:nth-child(3) {
+    animation-delay: 0.6s;
+    color: var(--blue);
+  }
+
+  /* ===== DESKTOP ===== */
+  #desktop { 
+    display: none; 
+    position: relative; 
+    width: 100%; 
+    height: 100%; 
+    background: url('https://i.imgur.com/qnfgYCo.png') no-repeat center center;
+    background-size: cover;
+    opacity: 0;
+    transition: opacity 1s ease;
+    overflow: hidden;
+    image-rendering: pixelated;
+  }
+  
+  .desktop-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1;
+  }
+  
+  .desktop-icons { 
+    position: absolute; 
+    top: 0;
+    left: 0;
+    display: flex; 
+    flex-direction: column;
+    gap: 20px; 
+    padding: 20px;
+    z-index: 2;
+  }
+  
+  .icon { 
+    width: 80px; 
+    text-align: center; 
+    cursor: pointer; 
+    color: var(--text);
+    transition: var(--transition);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid var(--primary);
+    image-rendering: pixelated;
+  }
+  
+  .icon:hover {
+    transform: translateY(-5px);
+    background: rgba(255, 0, 170, 0.2);
+    border: 2px solid var(--green);
+    box-shadow: 0 0 15px var(--green);
+  }
+  
+  .icon i { 
+    font-size: 32px; 
+    transition: var(--transition);
+    color: var(--primary);
+    margin-bottom: 8px;
+    text-shadow: 0 0 5px var(--primary);
+  }
+  
+  .icon:hover i {
+    color: var(--green);
+  }
+  
+  .icon span { 
+    display: block; 
+    font-size: 0.75rem; 
+    letter-spacing: 0.5px;
+    font-weight: bold;
+  }
+  
+  /* Taskbar */
+  .taskbar { 
+    position: absolute; 
+    bottom: 0; 
+    left: 0; 
+    right: 0; 
+    height: 40px; 
+    background: rgba(0, 0, 0, 0.9); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 0 15px; 
+    font-size: 0.9rem; 
+    color: var(--text);
+    border-top: 2px solid var(--primary);
+    z-index: 100;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+    image-rendering: pixelated;
+  }
+  
+  .start-menu {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    padding: 0 12px;
+    height: 100%;
+    background: rgba(30, 0, 30, 0.8);
+    border: 2px solid var(--primary);
+    border-bottom: none;
+  }
+  
+  .start-menu:hover {
+    background: rgba(50, 0, 50, 0.9);
+  }
+  
+  .start-menu i {
+    color: var(--primary);
+    font-size: 1.5rem;
+  }
+  
+  .start-menu span {
+    font-weight: bold;
+  }
+  
+  .taskbar-apps {
+    display: flex;
+    gap: 8px;
+    height: 100%;
+  }
+  
+  .taskbar-app {
+    padding: 0 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    height: 100%;
+    background: rgba(30, 0, 30, 0.6);
+    border: 2px solid transparent;
+    border-bottom: none;
+  }
+  
+  .taskbar-app:hover {
+    background: rgba(50, 0, 50, 0.8);
+    border: 2px solid var(--primary);
+    border-bottom: none;
+  }
+  
+  .taskbar-app i {
+    color: var(--primary);
+    font-size: 1.1rem;
+  }
+  
+  .taskbar-app span {
+    font-size: 0.85rem;
+  }
+  
+  .system-tray {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 100%;
+    padding: 0 10px;
+    background: rgba(30, 0, 30, 0.7);
+    border: 2px solid var(--primary);
+    border-bottom: none;
+  }
+  
+  .tray-icon {
+    font-size: 1rem;
+    color: var(--primary);
+  }
+  
+  #task-time {
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    color: var(--green);
+  }
+  
+  /* Start Menu */
+  #startMenu {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    width: 300px;
+    background: rgba(0, 0, 0, 0.95);
+    border: 2px solid var(--primary);
+    border-bottom: none;
+    display: none;
+    z-index: 99;
+    box-shadow: 0 -5px 15px rgba(0, 0, 0, 0.5);
+    padding: 15px;
+  }
+  
+  #startMenu.active {
+    display: block;
+  }
+  
+  .user-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px;
+    margin-bottom: 15px;
+    background: rgba(30, 0, 30, 0.7);
+    border: 1px solid var(--primary);
+  }
+  
+  .user-card-avatar {
+    width: 50px;
+    height: 50px;
+    border: 2px solid var(--primary);
+    background: url('https://i.imgur.com/qdHBmox.png') no-repeat center center;
+    background-size: cover;
+  }
+  
+  .user-card-name {
+    font-weight: bold;
+    color: var(--primary);
+  }
+  
+  .user-card-status {
+    font-size: 0.8rem;
+    color: var(--green);
+  }
+  
+  .app-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  
+  .app-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    cursor: pointer;
+    background: rgba(30, 0, 30, 0.5);
+    border: 1px solid transparent;
+  }
+  
+  .app-item:hover {
+    background: rgba(50, 0, 50, 0.7);
+    border: 1px solid var(--primary);
+  }
+  
+  .app-item i {
+    color: var(--primary);
+    font-size: 1.2rem;
+  }
+  
+  /* ===== WINDOWS ===== */
+  .window { 
+    position: absolute; 
+    width: 600px; 
+    height: 500px; 
+    background: var(--surface); 
+    color: var(--text); 
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 15px var(--primary); 
+    top: 50px;
+    left: 100px;
+    display: flex; 
+    flex-direction: column; 
+    opacity: 0; 
+    pointer-events: none; 
+    transition: var(--transition);
+    z-index: 50;
+    overflow: hidden;
+    image-rendering: pixelated;
+    resize: both;
+  }
+  
+  .window.active { 
+    opacity: 1; 
+    pointer-events: auto; 
+    z-index: 100;
+  }
+  
+  .window.minimized {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(100px);
+  }
+  
+  .window.maximized {
+    width: 90% !important;
+    height: 85% !important;
+    top: 5% !important;
+    left: 5% !important;
+    resize: none;
+  }
+  
+  .titlebar { 
+    padding: 8px 15px; 
+    background: rgba(0, 0, 0, 0.9); 
+    color: var(--text); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    cursor: move; 
+    user-select: none; 
+    border-bottom: 2px solid var(--primary);
+    font-size: 0.95rem;
+  }
+  
+  .titlebar .title { 
+    font-weight: bold; 
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 70%;
+    font-family: 'Press Start 2P', cursive;
+    font-size: 0.8rem;
+  }
+  
+  .controls { 
+    display: flex;
+    gap: 10px;
+  }
+  
+  .controls span { 
+    display: inline-block; 
+    width: 25px; 
+    height: 25px; 
+    text-align: center; 
+    line-height: 25px; 
+    cursor: pointer; 
+    transition: var(--transition);
+    font-size: 0.9rem;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+  }
+  
+  .minimize-btn {
+    background: rgba(255, 200, 0, 0.4);
+  }
+  
+  .maximize-btn {
+    background: rgba(0, 200, 0, 0.4);
+  }
+  
+  .close-btn {
+    background: rgba(255, 0, 0, 0.4);
+  }
+  
+  .controls span:hover {
+    transform: scale(1.1);
+  }
+  
+  .minimize-btn:hover {
+    background: rgba(255, 200, 0, 0.7);
+  }
+  
+  .maximize-btn:hover {
+    background: rgba(0, 200, 0, 0.7);
+  }
+  
+  .close-btn:hover {
+    background: rgba(255, 0, 0, 0.7);
+  }
+  
+  .content { 
+    flex: 1; 
+    padding: 20px; 
+    overflow-y: auto; 
+    font-size: 1rem; 
+    background: rgba(10, 0, 10, 0.8); 
+    color: var(--text);
+    line-height: 1.6;
+  }
+  
+  .content::-webkit-scrollbar {
+    width: 10px;
+  }
+  
+  .content::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .content::-webkit-scrollbar-thumb {
+    background-color: var(--primary);
+    border: 2px solid var(--black);
+  }
+  
+  .content h2 { 
+    color: var(--primary); 
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 8px;
+    font-family: 'Press Start 2P', cursive;
+    text-shadow: 0 0 5px var(--primary);
+  }
+  
+  .content p, .content li {
+    margin-bottom: 12px;
+  }
+  
+  .content ul {
+    padding-left: 25px;
+    margin-bottom: 20px;
+  }
+  
+  .content img { 
+    max-width: 100%; 
+    margin: 15px 0; 
+    border: 2px solid var(--primary);
+    transition: var(--transition);
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+    image-rendering: pixelated;
+  }
+  
+  .content img:hover {
+    border-color: var(--green);
+    box-shadow: 0 0 20px var(--green);
+  }
+  
+  .content button { 
+    margin-top: 15px; 
+    padding: 10px 18px; 
+    background: var(--black);
+    color: var(--primary); 
+    border: 2px solid var(--primary);
+    cursor: pointer; 
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    transition: var(--transition);
+  }
+  
+  .content button:hover { 
+    background: var(--primary);
+    color: var(--black);
+    box-shadow: 0 0 15px var(--primary);
+  }
+  
+  /* Gallery grid */
+  .gallery-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 15px; 
+    margin: 15px 0;
+  }
+  
+  .gallery-grid img { 
+    width: 100%; 
+    height: 100px; 
+    object-fit: cover; 
+    border: 2px solid var(--primary);
+    cursor: pointer; 
+    transition: var(--transition);
+    position: relative;
+    image-rendering: pixelated;
+  }
+  
+  .gallery-grid img:hover {
+    transform: scale(1.08);
+    border-color: var(--green);
+    box-shadow: 0 0 15px var(--green);
+    z-index: 2;
+  }
+  
+  /* Chat app styling */
+  .chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  
+  .chat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary);
+  }
+  
+  .contact-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    background: url('https://i.imgur.com/qdHBmox.png') no-repeat center center;
+    background-size: cover;
+  }
+  
+  .friend-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--blue);
+    background: url('https://i.imgur.com/9L0N1oP.jpeg') no-repeat center center;
+    background-size: cover;
+  }
+  
+  .contact-info {
+    flex: 1;
+  }
+  
+  .contact-name {
+    font-weight: bold;
+    color: var(--primary);
+  }
+  
+  .friend-name {
+    font-weight: bold;
+    color: var(--blue);
+  }
+  
+  .contact-status {
+    font-size: 0.8rem;
+    color: var(--green);
+  }
+  
+  .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--primary);
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .message {
+    padding: 10px 15px;
+    max-width: 80%;
+    font-size: 0.9rem;
+    position: relative;
+    border-radius: 18px;
+    word-wrap: break-word;
+    animation: fadeIn 0.3s ease;
+  }
+  
+  .message.incoming {
+    align-self: flex-start;
+    background: rgba(30, 0, 30, 0.7);
+    border: 2px solid var(--primary);
+    border-bottom-left-radius: 5px;
+  }
+  
+  .message.outgoing {
+    align-self: flex-end;
+    background: rgba(0, 30, 30, 0.7);
+    border: 2px solid var(--blue);
+    border-bottom-right-radius: 5px;
+  }
+  
+  .message-time {
+    font-size: 0.7rem;
+    opacity: 0.7;
+    margin-top: 5px;
+    text-align: right;
+  }
+  
+  .chat-input {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .chat-input input {
+    flex: 1;
+    padding: 12px 15px;
+    background: rgba(30, 0, 30, 0.7);
+    border: 2px solid var(--primary);
+    color: var(--text);
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    border-radius: 20px;
+  }
+  
+  .chat-input button {
+    padding: 12px;
+    margin: 0;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Music player */
+  .music-player {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .now-playing {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border: 2px solid var(--primary);
+  }
+  
+  .album-art {
+    width: 90px;
+    height: 90px;
+    border: 2px solid var(--primary);
+    box-shadow: 0 0 15px var(--primary);
+    background: url('https://i.imgur.com/YAlddlj.jpeg') no-repeat center center;
+    background-size: cover;
+    image-rendering: pixelated;
+  }
+  
+  .track-info {
+    flex: 1;
+  }
+  
+  .track-title {
+    font-weight: bold;
+    color: var(--primary);
+    margin-bottom: 5px;
+    font-size: 1.2rem;
+  }
+  
+  .track-artist {
+    font-size: 0.95rem;
+    color: var(--green);
+  }
+  
+  .player-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px;
+  }
+  
+  .control-btn {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 8px;
+    transition: var(--transition);
+  }
+  
+  .control-btn:hover {
+    color: var(--green);
+    transform: scale(1.1);
+  }
+  
+  .play-btn {
+    font-size: 2.5rem;
+  }
+  
+  .progress-container {
+    width: 100%;
+    margin: 10px 0;
+  }
+  
+  .progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 0, 170, 0.2);
+    overflow: hidden;
+    border: 2px solid var(--primary);
+    cursor: pointer;
+  }
+  
+  .progress {
+    height: 100%;
+    background: var(--primary);
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+  
+  .time-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    color: var(--text-alt);
+    margin-top: 5px;
+  }
+  
+  /* Webcam app */
+  .webcam-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  #videoElement {
+    width: 100%;
+    max-width: 400px;
+    border: 2px solid var(--primary);
+    background: #000;
+  }
+  
+  .webcam-controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .filter-btn {
+    padding: 8px 12px;
+    background: var(--black);
+    color: var(--primary);
+    border: 2px solid var(--primary);
+    cursor: pointer;
+    font-family: 'VT323', monospace;
+    font-size: 1rem;
+    transition: var(--transition);
+  }
+  
+  .filter-btn:hover, .filter-btn.active {
+    background: var(--primary);
+    color: var(--black);
+  }
+  
+  .capture-btn {
+    padding: 10px 20px;
+    background: var(--black);
+    color: var(--green);
+    border: 2px solid var(--green);
+    cursor: pointer;
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    transition: var(--transition);
+  }
+  
+  .capture-btn:hover {
+    background: var(--green);
+    color: var(--black);
+  }
+  
+  .upload-btn {
+    padding: 10px 20px;
+    background: var(--black);
+    color: var(--blue);
+    border: 2px solid var(--blue);
+    cursor: pointer;
+    font-family: 'VT323', monospace;
+    font-size: 1.2rem;
+    margin-top: 10px;
+    transition: var(--transition);
+  }
+  
+  .upload-btn:hover {
+    background: var(--blue);
+    color: var(--black);
+  }
+  
+  .canvas-container {
+    margin-top: 15px;
+    display: none;
+  }
+  
+  #canvasElement {
+    max-width: 100%;
+    border: 2px solid var(--primary);
+  }
+  
+  .download-btn {
+    padding: 8px 15px;
+    background: var(--black);
+    color: var(--blue);
+    border: 2px solid var(--blue);
+    cursor: pointer;
+    font-family: 'VT323', monospace;
+    font-size: 1rem;
+    margin-top: 10px;
+    transition: var(--transition);
+  }
+  
+  .download-btn:hover {
+    background: var(--blue);
+    color: var(--black);
+  }
+  
+  .overlay-container {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+  }
+  
+  .webcam-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+  }
+  
+  /* Game app */
+  .game-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .game-board {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    grid-template-rows: repeat(3, 100px);
+    gap: 5px;
+    background: var(--primary);
+    padding: 5px;
+    border-radius: 5px;
+  }
+  
+  .game-cell {
+    width: 100px;
+    height: 100px;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    font-family: 'Press Start 2P', cursive;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .game-cell:hover {
+    background: rgba(255, 0, 170, 0.3);
+  }
+  
+  .game-info {
+    margin-top: 15px;
+    text-align: center;
+  }
+  
+  .game-status {
+    font-size: 1.2rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+  }
+  
+  .reset-btn {
+    padding: 8px 15px;
+    background: var(--black);
+    color: var(--green);
+    border: 2px solid var(--green);
+    cursor: pointer;
+    font-family: 'VT323', monospace;
+    font-size: 1.1rem;
+    transition: var(--transition);
+  }
+  
+  .reset-btn:hover {
+    background: var(--green);
+    color: var(--black);
+  }
+  
+  /* Social Media Feed */
+  .social-post {
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid var(--primary);
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+  }
+  
+  .post-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .post-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    background-size: cover;
+  }
+  
+  .post-user {
+    font-weight: bold;
+    color: var(--primary);
+  }
+  
+  .post-username {
+    font-size: 0.8rem;
+    color: var(--text-alt);
+  }
+  
+  .post-time {
+    font-size: 0.8rem;
+    color: var(--green);
+    margin-left: auto;
+  }
+  
+  .post-content {
+    margin-bottom: 10px;
+  }
+  
+  .post-image {
+    margin: 10px 0;
+  }
+  
+  .post-image img {
+    width: 100%;
+    border: 2px solid var(--primary);
+  }
+  
+  .post-actions {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .post-action {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+    color: var(--text-alt);
+    transition: var(--transition);
+  }
+  
+  .post-action:hover {
+    color: var(--primary);
+  }
+  
+  .hoso-judgment {
+    background: rgba(255, 0, 170, 0.2);
+    border: 2px solid var(--primary);
+    padding: 10px;
+    margin-top: 10px;
+    border-radius: 5px;
+  }
+  
+  .judgment-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 5px;
+  }
+  
+  .judgment-avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--primary);
+    background: url('https://i.imgur.com/qdHBmox.png') no-repeat center center;
+    background-size: cover;
+  }
+  
+  .judgment-user {
+    font-weight: bold;
+    color: var(--primary);
+    font-size: 0.9rem;
+  }
+  
+  .judgment-text {
+    font-size: 0.9rem;
+    color: var(--green);
+  }
+  
+  /* Notes app */
+  .notes-list {
+    margin: 15px 0;
+  }
+  
+  .note-item {
+    padding: 10px;
+    margin-bottom: 10px;
+    background: rgba(30, 0, 30, 0.5);
+    border: 1px solid var(--primary);
+    cursor: pointer;
+  }
+  
+  .note-item:hover {
+    background: rgba(50, 0, 50, 0.7);
+  }
+  
+  .note-title {
+    font-weight: bold;
+    color: var(--primary);
+  }
+  
+  .note-preview {
+    font-size: 0.9rem;
+    color: var(--text-alt);
+  }
+  
+  .note-content {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1px solid var(--primary);
+  }
+  
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background: var(--surface);
+    border: 2px solid var(--primary);
+    padding: 20px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 0 30px var(--primary);
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--primary);
+  }
+  
+  .modal-close {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--primary);
+  }
+  
+  .modal-body img {
+    width: 100%;
+    margin-bottom: 15px;
+    border: 2px solid var(--primary);
+  }
+  
+  /* Animations */
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+    20%, 40%, 60%, 80% { transform: translateX(5px); }
+  }
+  
+  /* Mobile specific styles */
+  @media (max-width: 768px) {
+    .desktop-icons {
+      top: 5%;
+      gap: 15px;
+    }
+    
+    .window {
+      width: 95% !important;
+      height: 85% !important;
+      top: 5% !important;
+      left: 2.5% !important;
+      resize: none;
+    }
+    
+    .taskbar {
+      height: 50px;
+      padding: 0 10px;
+    }
+    
+    .gallery-grid {
+      grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    }
+    
+    .gallery-grid img {
+      height: 90px;
+    }
+    
+    .content {
+      padding: 15px;
+    }
+    
+    .user-avatar {
+      width: 100px;
+      height: 100px;
+    }
+    
+    .user-name {
+      font-size: 1.8rem;
+    }
+    
+    #startMenu {
+      width: 280px;
+    }
+    
+    .app-list {
+      grid-template-columns: 1fr;
+    }
+    
+    .lock-screen-content {
+      padding: 30px 20px;
+    }
+    
+    .game-board {
+      grid-template-columns: repeat(3, 80px);
+      grid-template-rows: repeat(3, 80px);
+    }
+    
+    .game-cell {
+      width: 80px;
+      height: 80px;
+      font-size: 2rem;
+    }
+    
+    .titlebar .title {
+      font-size: 0.7rem;
+    }
+    
+    .controls span {
+      width: 20px;
+      height: 20px;
+      line-height: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+  <!-- Lock Screen -->
+  <div id="lockScreen">
+    <div class="lock-screen-content">
+      <div class="user-profile">
+        <div class="user-avatar"></div>
+        <h1 class="user-name">HOSO</h1>
+        <p class="user-title">2010 Computer</p>
+      </div>
+      <div class="login-form">
+        <input type="password" class="password-input" id="passwordInput" placeholder="ENTER PASSCODE">
+        <button class="login-btn" onclick="attemptLogin()">UNLOCK</button>
+        <div class="password-hint">_____ shock?</div>
+        <div class="login-message" id="loginMessage"></div>
+      </div>
+    </div>
+    <div class="lock-screen-icons">
+      <i class="fas fa-lock lock-icon"></i>
+      <i class="fas fa-music lock-icon"></i>
+      <i class="fas fa-camera lock-icon"></i>
+    </div>
+  </div>
+  
+  <!-- Desktop -->
+  <div id="desktop">
+    <div class="desktop-overlay"></div>
+    
+    <!-- Desktop Icons -->
+    <div class="desktop-icons">
+      <div class="icon" onclick="openWindow('musicWindow')">
+        <i class="fas fa-music"></i>
+        <span>Music Player</span>
+      </div>
+      <div class="icon" onclick="openWindow('galleryWindow')">
+        <i class="fas fa-image"></i>
+        <span>Photos</span>
+      </div>
+      <div class="icon" onclick="openWindow('chatWindow')">
+        <i class="fas fa-comment-alt"></i>
+        <span>Messages</span>
+      </div>
+      <div class="icon" onclick="openWindow('notesWindow')">
+        <i class="fas fa-sticky-note"></i>
+        <span>Notes</span>
+      </div>
+      <div class="icon" onclick="openWindow('webcamWindow')">
+        <i class="fas fa-camera"></i>
+        <span>Webcam</span>
+      </div>
+      <div class="icon" onclick="openWindow('gameWindow')">
+        <i class="fas fa-gamepad"></i>
+        <span>Games</span>
+      </div>
+      <div class="icon" onclick="openWindow('socialWindow')">
+        <i class="fas fa-heart"></i>
+        <span>Gossip</span>
+      </div>
+    </div>
+    
+    <!-- Taskbar -->
+    <div class="taskbar">
+      <div class="start-menu" onclick="toggleStartMenu()">
+        <i class="fas fa-bars"></i>
+        <span>Start</span>
+      </div>
+      <div class="taskbar-apps" id="taskbarApps">
+        <!-- Taskbar apps will be added dynamically -->
+      </div>
+      <div class="system-tray">
+        <i class="fas fa-wifi tray-icon"></i>
+        <i class="fas fa-volume-up tray-icon"></i>
+        <div id="task-time">22:17</div>
+      </div>
+    </div>
+    
+    <!-- Start Menu -->
+    <div id="startMenu">
+      <div class="user-card">
+        <div class="user-card-avatar"></div>
+        <div class="user-card-info">
+          <div class="user-card-name">HOSO</div>
+          <div class="user-card-status">Online</div>
+        </div>
+      </div>
+      <div class="app-list">
+        <div class="app-item" onclick="openWindow('musicWindow')">
+          <i class="fas fa-music"></i>
+          <span>Music</span>
+        </div>
+        <div class="app-item" onclick="openWindow('galleryWindow')">
+          <i class="fas fa-image"></i>
+          <span>Photos</span>
+        </div>
+        <div class="app-item" onclick="openWindow('chatWindow')">
+          <i class="fas fa-comment-alt"></i>
+          <span>Messages</span>
+        </div>
+        <div class="app-item" onclick="openWindow('notesWindow')">
+          <i class="fas fa-sticky-note"></i>
+          <span>Notes</span>
+        </div>
+        <div class="app-item" onclick="openWindow('webcamWindow')">
+          <i class="fas fa-camera"></i>
+          <span>Webcam</span>
+        </div>
+        <div class="app-item" onclick="openWindow('gameWindow')">
+          <i class="fas fa-gamepad"></i>
+          <span>Games</span>
+        </div>
+        <div class="app-item" onclick="openWindow('socialWindow')">
+          <i class="fas fa-heart"></i>
+          <span>Gossip</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Windows -->
+  <!-- Music Player Window -->
+  <div class="window" id="musicWindow">
+    <div class="titlebar">
+      <div class="title">Music Player</div>
+      <div class="controls">
+        <span class="minimize-btn" onclick="minimizeWindow('musicWindow')">—</span>
+        <span class="maximize-btn" onclick="maximizeWindow('musicWindow')">□</span>
+        <span class="close-btn" onclick="closeWindow('musicWindow')">✕</span>
+      </div>
+    </div>
+    <div class="content">
+      <h2>Now Playing</h2>
+      <div class="music-player">
+        <div class="now-playing">
+          <div class="album-art"></div>
+          <div class="track-info">
+            <div class="track-title">IDENTITY</div>
+            <div class="track-artist">HOSO</div>
+          </div>
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-bar" onclick="seek(event)">
+            <div class="progress" id="musicProgress"></div>
+          </div>
+          <div class="time-info">
+            <span id="currentTime">0:00</span>
+            <span id="totalTime">0:00</span>
+          </div>
+        </div>
+        
+        <div class="player-controls">
+          <button class="control-btn" onclick="previousTrack()"><i class="fas fa-step-backward"></i></button>
+          <button class="control-btn play-btn" onclick="togglePlay()"><i class="fas fa-play" id="playIcon"></i></button>
+          <button class="control-btn" onclick="nextTrack()"><i class="fas fa-step-forward"></i></button>
+        </div>
+      </div>
+      
+      <h2>Playlist</h2>
+      <ol id="playlist">
+        <li onclick="playTrack(0)">IDENTITY</li>
+        <li onclick="playTrack(1)">Stare</li>
+        <li onclick="playTrack(2)">Spell</li>
+        <li onclick="playTrack(3)">Favourite</li>
+        <li onclick="playTrack(4)">Chaos</li>
+        <li onclick="playTrack(5)">Control</li>
+        <li onclick="playTrack(6)">Can We Have It?</li>
+        <li onclick="playTrack(7)">I'm So Cold</li>
+        <li onclick="playTrack(8)">Divine</li>
+        <li onclick="playTrack(9)">Play Me Hard</li>
+        <li onclick="playTrack(10)">Tipsy</li>
+        <li onclick="playTrack(11)">Pleasure</li>
+        <li onclick="playTrack(12)">Yeux d'ange</li>
+      </ol>
+    </div>
+  </div>
+  
+  <!-- Gallery Window -->
+  <div class="window" id="galleryWindow">
+    <div class="titlebar">
+      <div class="title">Photo Gallery</div>
+      <div class="controls">
+        <span class="minimize-btn" onclick="minimizeWindow('galleryWindow')">—</span>
+        <span class="maximize-btn" onclick="maximizeWindow('galleryWindow')">□</span>
+        <span class="close-btn" onclick="closeWindow('galleryWindow')">✕</span>
+      </div>
+    </div>
+    <div class="content">
+      <h2>My Photos</h2>
+      <div class="gallery-grid" id="photoGallery">
+        <img src="https://i.imgur.com/GyPqKm0.jpeg" alt="Concert" onclick="showImageDetails('Concert', '2010-08-15', 'Performing at the summer festival')">
+        <img src="https://i.imgur.com/sSnYlX6.jpeg" alt="Studio" onclick="showImageDetails('Studio', '2010-07-22', 'Recording new tracks')">
+        <img src="https://i.imgur.com/7rnMyti.jpeg" alt="Friends" onclick="showImageDetails('Friends', '2010-06-10', 'Hanging out with the crew')">
+        <img src="https://i.imgur.com/GnwAEKZ.jpeg" alt="Guitar" onclick="showImageDetails('Guitar', '2010-05-18', 'My new guitar!')">
+        <img src="https://i.imgur.com/iSkobcy.jpeg" alt="Beach" onclick="showImageDetails('Beach', '2010-08-03', 'Day at the beach')">
+        <img src="https://i.imgur.com/wjOonVR.jpeg" alt="Sunset" onclick="showImageDetails('Sunset', '2010-07-30', 'Beautiful sunset')">
+      </div>
+      
+      <h2>Webcam Photos</h2>
+      <div class="gallery-grid" id="webcamGallery">
+        <!-- Webcam photos will be added here dynamically -->
+      </div>
+      
+      <h2>Secret Photos</h2>
+      <div class="password-prompt">
+        <input type="password" id="galleryPassword" class="password-input" placeholder="Enter code to view secret photos">
+        <button onclick="checkGalleryPassword()">Unlock</button>
+      </div>
+      <div class="secret-content" id="secretGallery" style="display: none;">
+        <div class="gallery-grid">
+          <img src="https://i.imgur.com/uJKESP6.jpeg" alt="Secret 1" onclick="showImageDetails('Secret Photo 1', '2010-09-01', 'i miss him')">
+          <img src="https://i.imgur.com/kIoMW8a.jpeg" alt="Secret 2" onclick="showImageDetails('Secret Photo 2', '2010-11-05', 'my baby')">
+          <img src="https://i.imgur.com/d5Uc5ob.jpeg" alt="Secret 3" onclick="showImageDetails('Secret Photo 3', '2010-12-10', 'love him sm')">
+      <img src="https://i.imgur.com/d9Hcbga.jpeg" alt="Secret 4" onclick="showImageDetails('Secret Photo 4', '2010-07-12', 'my pretty boy')">
+      <img src="https://i.imgur.com/WurYNED.jpeg" alt="Secret 5" onclick="showImageDetails('Secret Photo 5', '2010-08-13', 'birthday boy')">
+        </div>
+        <div class="password-prompt">
+          <button onclick="lockSecretGallery()">Lock Gallery</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Chat Window -->
+  <div class="window" id="chatWindow">
+    <div class="titlebar">
+      <div class="title">Messages - KAI</div>
+      <div class="controls">
+        <span class="minimize-btn" onclick="minimizeWindow('chatWindow')">—</span>
+        <span class="maximize-btn" onclick="maximizeWindow('chatWindow')">□</span>
+        <span class="close-btn" onclick="closeWindow('chatWindow')">✕</span>
+      </div>
+    </div>
+    <div class="content">
+      <div class="chat-container">
+        <div class="chat-header">
+          <div class="friend-avatar"></div>
+          <div class="contact-info">
+            <div class="friend-name">KAI</div>
+            <div class="contact-status">Online - Last seen just now</div>
+          </div>
+        </div>
+        
+        <div class="chat-messages" id="chatMessages">
+          <div class="message incoming">
+            <div class="message-content">
+              <p>Hey, how's the new track coming along?</p>
+              <div class="message-time">22:05</div>
+            </div>
+          </div>
+          <div class="message outgoing">
+            <div class="message-content">
+              <p>almost finished with the recording.</p>
+              <div class="message-time">22:06</div>
+            </div>
+          </div>
+          <div class="message incoming">
+            <div class="message-content">
+              <p>Can't wait to hear it! You working on anything else?</p>
+              <div class="message-time">22:07</div>
+            </div>
+          </div>
+          <div class="message outgoing">
+            <div class="message-content">
+              <p>maybe something with someone... but its complicated.</p>
+              <div class="message-time">22:08</div>
+            </div>
+          </div>
+          <div class="message incoming">
+            <div class="message-content">
+              <p>Ooh, spill the tea! What's going on with you two?</p>
+              <div class="message-time">22:09</div>
+            </div>
+          </div>
+          <div class="message outgoing">
+            <div class="message-content">
+              <p>not much to tell really. just studio sessions.</p>
+              <div class="message-time">22:10</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="chat-input">
+          <input type="text" id="messageInput" placeholder="Type your message...">
+          <button onclick="sendMessage()"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Webcam Window -->
+  <div class="window" id="webcamWindow">
+    <div class="titlebar">
+      <div class="title">Webcam</div>
+      <div class="controls">
+        <span class="minimize-btn" onclick="minimizeWindow('webcamWindow')">—</span>
+        <span class="maximize-btn" onclick="maximizeWindow('webcamWindow')">□</span>
+        <span class="close-btn" onclick="closeWindow('webcamWindow')">✕</span>
+      </div>
+    </div>
+    <div class="content">
+      <h2>HOSO's Webcam</h2>
+      
+      <div class="webcam-container">
+        <div class="overlay-container">
+          <video id="videoElement" autoplay="true"></video>
+          <img src="https://i.imgur.com/Muonths.png" class="webcam-overlay" id="webcamOverlay">
+        </div>
+        
+        <div class="webcam-controls">
+          <button class="filter-btn active" onclick="applyFilter('none')" id="filterNone">Normal</button>
+          <button class="filter-btn" onclick="applyFilter('grayscale')">Grayscale</button>
+          <button class="filter-btn" onclick="applyFilter('sepia')">Sepia</button>
+          <button class="filter-btn" onclick="applyFilter('invert')">Invert</button>
+          <button class="filter-btn" onclick="applyFilter('hue')">Hue Rotate</button>
+        </div>
+        
+        <button class="capture-btn" onclick="captureImage()"><i class="fas fa-camera"></i> Capture Photo</button>
+        
+        <input type="file" id="uploadInput" accept="image/*" style="display: none;" onchange="handleImageUpload()">
+        <button class="upload-btn" onclick="document.getElementById('uploadInput').click()"><i class="fas fa-upload"></i> Upload Photo</button>
+        
+        <div class="canvas-container" id="canvasContainer">
+          <canvas id="canvasElement"></canvas>
+          <button class="download-btn" onclick="downloadImage()"><i class="fas fa-download"></i> Download</button>
+          <button class="capture-btn" onclick="saveToGallery()"><i class="fas fa-save"></i> Save to Gallery</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Game Window -->
+  <div class="window" id="gameWindow">
+    <div class="titlebar">
+      <div class="title">Tic-Tac-Toe</div>
+      <div class="controls">
+        <span class="minimize-btn" onclick="minimizeWindow('gameWindow')">—</span>
+        <span class="maximize-btn" onclick="maximizeWindow('gameWindow')">□</span>
+        <span class="close-btn" onclick="closeWindow('gameWindow')">✕</span>
+      </div>
+    </div>
+    <div class="content">
+      <h2>Tic-Tac-Toe</h2>
+      
+      <div class="game-container">
+        <div class="game-board" id="gameBoard">
+          <div class="game-cell" onclick="makeMove(0)"></div>
+          <div class="game-cell" onclick="makeMove(1)"></div>
+          <div class="game-cell" onclick="makeMove(2)"></div>
+          <div class="game-cell" onclick="makeMove(3)"></div>
+          <div class="game-cell" onclick="makeMove(4)"></div>
+          <div class="game-cell" onclick="makeMove(5)"></div>
+          <div class="game-cell" onclick="makeMove(6)"></div>
+          <div class="game-cell" onclick="makeMove(7)"></div>
+          <div class="game-cell" onclick="makeMove(8)"></div>
+        </div>
+        
+        <div class="game-info">
+          <div class="game-status" id="gameStatus">Your turn (X)</div>
+          <button class="reset-btn" onclick="resetGame()">Reset Game</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Social Media Window -->
+  <div class="window" id="socialWindow">
+    <div class="titlebar">
+      <div class="title">Gossip Feed</div>
+      <div class="controls">
+        <span class="minimize-btn" onclick="minimizeWindow('socialWindow')">—</span>
+        <span class="maximize-btn" onclick="maximizeWindow('socialWindow')">□</span>
+        <span class="close-btn" onclick="closeWindow('socialWindow')">✕</span>
+      </div>
+    </div>
+    <div class="content">
+      <h2>Gossip™ - Spill the Tea ☕</h2>
+      
+      <div class="social-post">
+        <div class="post-header">
+          <div class="post-avatar" style="background-image: url('https://i.imgur.com/AgVk9wx.jpeg')"></div>
+          <div>
+            <div class="post-user">GossipQueen99</div>
+            <div class="post-username">@drama_llama</div>
+          </div>
+          <div class="post-time">2 hours ago</div>
+        </div>
+        <div class="post-content">
+          <p>Okay so I heard from a reliable source that two artists from rival groups were spotted together at a cafe yesterday 👀 Could a collab be coming?</p>
+        </div>
+        <div class="hoso-judgment">
+          <div class="judgment-header">
+            <div class="judgment-avatar"></div>
+            <div class="judgment-user">@hosotorosso12</div>
+          </div>
+          <div class="judgment-text">unless you have actual proof, maybe keep your "reliable sources" to yourself. get a life </div>
+        </div>
+        <div class="post-actions">
+          <div class="post-action"><i class="fas fa-heart"></i> <span>4.3k</span></div>
+          <div class="post-action"><i class="fas fa-comment"></i> <span>127</span></div>
+          <div class="post-action"><i class="fas fa-share"></i> <span>83</span></div>
+        </div>
+      </div>
+      
+      <div class="social-post">
+        <div class="post-header">
+          <div class="post-avatar" style="background-image: url('https://i.imgur.com/ajhDHsI.jpeg')"></div>
+          <div>
+            <div class="post-user">TruthTeller</div>
+            <div class="post-username">@real_tea_only</div>
+          </div>
+          <div class="post-time">5 hours ago</div>
+        </div>
+        <div class="post-content">
+          <p>Someone's dating someone they shouldn't be dating... and it's not who you think! The evidence is piling up 📸</p>
+        </div>
+        <div class="post-image">
+          <img src="https://i.imgur.com/IA2KiPJ.jpeg" alt="Blurry photo of two people">
+        </div>
+        <div class="hoso-judgment">
+          <div class="judgment-header">
+            <div class="judgment-avatar"></div>
+            <div class="judgment-user">@hosotorosso12</div>
+          </div>
+          <div class="judgment-text">oh god yall really dont have a job do you </div>
+        </div>
+        <div class="post-actions">
+          <div class="post-action"><i class="fas fa-heart"></i> <span>8.1k</span></div>
+          <div class="post-action"><i class="fas fa-comment"></i> <span>233</span></div>
+          <div class="post-action"><i class="fas fa-share"></i> <span>125</span></div>
+        </div>
+      </div>
+      
+      <div class="social-post">
+        <div class="post-header">
+          <div class="post-avatar" style="background-image: url('https://i.imgur.com/q4bDSHT.jpeg')"></div>
+          <div>
+            <div class="post-user">RumorMill</div>
+            <div class="post-username">@all_tea_all_day</div>
+          </div>
+          <div class="post-time">1 day ago</div>
+        </div>
+        <div class="post-content">
+          <p>Okay but did anyone else notice how Hoso and Jaemin were totally avoiding eye contact at the awards show? Something's definitely up between them! 💔</p>
+        </div>
+        <div class="hoso-judgment">
+          <div class="judgment-header">
+            <div class="judgment-avatar"></div>
+            <div class="judgment-user">@hosotorosso12</div>
+          </div>
+          <div class="judgment-text">we were both focused on our performances, unlike some people who seem focused on creating drama where none exists. </div>
+        </div>
+        <div class="post-actions">
+          <div class="post-action"><i class="fas fa-heart"></i> <span>15.3k</span></div>
+          <div class="post-action"><i class="fas fa-comment"></i> <span>455</span></div>
+          <div class="post-action"><i class="fas fa-share"></i> <span>275</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Notes Window -->
+  <div class="window" id="notesWindow">
+    <div class="titlebar">
+      <div class="title">My Notes</div>
+      <div class="controls">
+        <span class="minimize-btn" onclick="minimizeWindow('notesWindow')">—</span>
+        <span class="maximize-btn" onclick="maximizeWindow('notesWindow')">□</span>
+        <span class="close-btn" onclick="closeWindow('notesWindow')">✕</span>
+      </div>
+    </div>
+    <div class="content">
+      <h2>HOSO's Notes</h2>
+      
+      <div class="notes-list">
+        <div class="note-item" onclick="showNote('note1')">
+          <div class="note-title">Song Ideas</div>
+          <div class="note-preview">New track concepts and lyrics...</div>
+        </div>
+        <div class="note-item" onclick="showNote('note2')">
+          <div class="note-title">Passwords</div>
+          <div class="note-preview">Important codes and passwords...</div>
+        </div>
+        <div class="note-item" onclick="showNote('note3')">
+          <div class="note-title">Tour Dates</div>
+          <div class="note-preview">Upcoming shows and events...</div>
+        </div>
+        <div class="note-item" onclick="showNote('note4')">
+          <div class="note-title">Personal</div>
+          <div class="note-preview">Private thoughts and reflections...</div>
+        </div>
+      </div>
+      
+      <div id="note1" class="note-content" style="display:none;">
+        <h3>Song Ideas</h3>
+        <p>"Identity,Identity,u want mine so desperately" - potential chorus line</p>
+        <p>"doctor,doctor, where s your degree?" - for the bridge</p>
+        <p>New track concept: "Spell" - synth heavy with ethereal vocals</p>
+      </div>
+      
+      <div id="note2" class="note-content" style="display:none;">
+        <h3>Passwords</h3>
+        <p>Computer login: electric</p>
+        <p>Secret photos: ??</p>
+        <p>Email: St@re2020</p>
+        <p>Bank: Div1n3#09</p>
+      </div>
+      
+      <div id="note3" class="note-content" style="display:none;">
+        <h3>Tour Dates</h3>
+        <p>Oct 15 - Club Neon, Seoul</p>
+        <p>Oct 22 - Cyberpunk Bar, Busan</p>
+        <p>Nov 5 - Digital Dreams Festival, Tokyo</p>
+        <p>Nov 18 - Glitch Gallery, Osaka</p>
+      </div>
+      
+      <div id="note4" class="note-content" style="display:none;">
+        <h3>Personal</h3>
+        <p>i need to figure out how to not interact with him... his fans fucking hate me already,why? because i can get his attention and they cant</p>
+        <p>sometimes i want to dissapear</p>
+        <p>im tired..</p>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Image Details Modal -->
+  <div class="modal" id="imageModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Image Details</h2>
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+      </div>
+      <div class="modal-body">
+        <img id="modalImage" src="" alt="">
+        <div id="modalDate"></div>
+        <div id="modalCaption"></div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // DOM elements
+  const lockScreen = document.getElementById('lockScreen');
+  const desktop = document.getElementById('desktop');
+  const passwordInput = document.getElementById('passwordInput');
+  const loginMessage = document.getElementById('loginMessage');
+  const taskTime = document.getElementById('taskTime');
+  const startMenu = document.getElementById('startMenu');
+  const chatMessages = document.getElementById('chatMessages');
+  const messageInput = document.getElementById('messageInput');
+  const webcamGallery = document.getElementById('webcamGallery');
+  const taskbarApps = document.getElementById('taskbarApps');
+  
+  // Correct password for the system
+  const SYSTEM_PASSWORD = "electric";
+  const GALLERY_PASSWORD = "jaemin";
+  
+  // Track active window for z-index management
+  let zIndexCounter = 100;
+  let activeWindows = [];
+  
+  // Webcam variables
+  let videoStream;
+  let currentFilter = 'none';
+  let capturedImageData = null;
+  
+  // Game variables
+  let currentPlayer = 'X';
+  let gameBoard = ['', '', '', '', '', '', '', '', ''];
+  let gameActive = true;
+  
+  // Music player variables
+  let isPlaying = false;
+  let currentTrack = 0;
+  let audioContext;
+  let audioElement;
+  let tracks = [
+    { name: "IDENTITY", duration: "3:45" },
+    { name: "Stare", duration: "4:12" },
+    { name: "Spell", duration: "3:58" },
+    { name: "Favourite", duration: "4:23" },
+    { name: "Chaos", duration: "3:37" },
+    { name: "Control", duration: "4:05" },
+    { name: "Can We Have It?", duration: "3:51" },
+    { name: "I'm So Cold", duration: "4:18" },
+    { name: "Divine", duration: "3:42" },
+    { name: "Play Me Hard", duration: "4:07" },
+    { name: "Tipsy", duration: "3:29" },
+    { name: "Pleasure", duration: "4:33" },
+    { name: "Yeux d'ange", duration: "4:01" }
+  ];
+
+  // Dragging variables
+  let isDragging = false;
+  let dragOffsetX, dragOffsetY;
+  let currentDraggedWindow = null;
+  
+  // Update time
+  function updateTime() {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    taskTime.textContent = timeStr;
+  }
+  
+  // Initialize the system
+  function initSystem() {
+    updateTime();
+    setInterval(updateTime, 60000);
+    
+    // Focus password input on lock screen
+    passwordInput.focus();
+    
+    // Add event listener for Enter key on password input
+    passwordInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        attemptLogin();
+      }
+    });
+    
+    // Add event listener for Enter key on message input
+    if (messageInput) {
+      messageInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          sendMessage();
+        }
+      });
+    }
+    
+    // Initialize music player
+    initMusicPlayer();
+    
+    // Load saved webcam photos from localStorage
+    loadWebcamPhotos();
+    
+    // Add window dragging functionality
+    initWindowDragging();
+  }
+  
+  // Initialize music player
+  function initMusicPlayer() {
+    // Set up initial track info
+    updateTrackInfo();
+    
+    // Create a fake audio context for visualization
+    try {
+      audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    } catch (e) {
+      console.log('Web Audio API is not supported in this browser');
+    }
+  }
+  
+  // Update track information
+  function updateTrackInfo() {
+    const trackTitle = document.querySelector('.track-title');
+    const totalTime = document.getElementById('totalTime');
+    
+    if (trackTitle && totalTime) {
+      trackTitle.textContent = tracks[currentTrack].name;
+      totalTime.textContent = tracks[currentTrack].duration;
+    }
+  }
+  
+  // Toggle play/pause
+  function togglePlay() {
+    const playIcon = document.getElementById('playIcon');
+    
+    if (isPlaying) {
+      // Pause music
+      playIcon.classList.remove('fa-pause');
+      playIcon.classList.add('fa-play');
+      isPlaying = false;
+      
+      // Stop progress animation
+      document.getElementById('musicProgress').style.width = '0%';
+      document.getElementById('currentTime').textContent = '0:00';
+    } else {
+      // Play music
+      playIcon.classList.remove('fa-play');
+      playIcon.classList.add('fa-pause');
+      isPlaying = true;
+      
+      // Simulate progress animation
+      simulatePlayback();
+    }
+  }
+  
+  // Simulate music playback
+  function simulatePlayback() {
+    if (!isPlaying) return;
+    
+    const progressBar = document.getElementById('musicProgress');
+    const currentTime = document.getElementById('currentTime');
+    let progress = 0;
+    
+    const interval = setInterval(() => {
+      if (!isPlaying) {
+        clearInterval(interval);
+        return;
+      }
+      
+      progress += 0.5;
+      if (progress > 100) {
+        progress = 0;
+        nextTrack();
+        return;
+      }
+      
+      progressBar.style.width = progress + '%';
+      
+      // Calculate current time based on track duration
+      const totalSeconds = timeStringToSeconds(tracks[currentTrack].duration);
+      const currentSeconds = Math.floor((progress / 100) * totalSeconds);
+      currentTime.textContent = secondsToTimeString(currentSeconds);
+    }, 500);
+  }
+  
+  // Convert time string to seconds
+  function timeStringToSeconds(timeStr) {
+    const parts = timeStr.split(':');
+    return parseInt(parts[0]) * 60 + parseInt(parts[1]);
+  }
+  
+  // Convert seconds to time string
+  function secondsToTimeString(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return mins + ':' + (secs < 10 ? '0' : '') + secs;
+  }
+  
+  // Play specific track
+  function playTrack(index) {
+    currentTrack = index;
+    updateTrackInfo();
+    
+    if (isPlaying) {
+      // Restart playback if already playing
+      const playIcon = document.getElementById('playIcon');
+      playIcon.classList.remove('fa-play');
+      playIcon.classList.add('fa-pause');
+      simulatePlayback();
+    }
+  }
+  
+  // Play next track
+  function nextTrack() {
+    currentTrack = (currentTrack + 1) % tracks.length;
+    updateTrackInfo();
+    
+    if (isPlaying) {
+      simulatePlayback();
+    }
+  }
+  
+  // Play previous track
+  function previousTrack() {
+    currentTrack = (currentTrack - 1 + tracks.length) % tracks.length;
+    updateTrackInfo();
+    
+    if (isPlaying) {
+      simulatePlayback();
+    }
+  }
+  
+  // Seek in track
+  function seek(event) {
+    if (!isPlaying) return;
+    
+    const progressBar = event.currentTarget;
+    const bounds = progressBar.getBoundingClientRect();
+    const x = event.clientX - bounds.left;
+    const percentage = (x / bounds.width) * 100;
+    
+    document.getElementById('musicProgress').style.width = percentage + '%';
+    
+    // Calculate current time based on seek position
+    const totalSeconds = timeStringToSeconds(tracks[currentTrack].duration);
+    const currentSeconds = Math.floor((percentage / 100) * totalSeconds);
+    document.getElementById('currentTime').textContent = secondsToTimeString(currentSeconds);
+  }
+  
+  // Initialize window dragging
+  function initWindowDragging() {
+    const titlebars = document.querySelectorAll('.titlebar');
+    
+    titlebars.forEach(titlebar => {
+      titlebar.addEventListener('mousedown', startDrag);
+    });
+    
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', stopDrag);
+    document.addEventListener('mouseleave', stopDrag);
+  }
+  
+  // Start dragging a window
+  function startDrag(e) {
+    if (e.button !== 0) return; // Only left click
+    
+    const window = e.target.closest('.window');
+    if (!window) return;
+    
+    isDragging = true;
+    currentDraggedWindow = window;
+    
+    // Bring window to front
+    bringToFront(window.id);
+    
+    const rect = window.getBoundingClientRect();
+    dragOffsetX = e.clientX - rect.left;
+    dragOffsetY = e.clientY - rect.top;
+    
+    window.style.cursor = 'grabbing';
+  }
+  
+  // Drag window
+  function drag(e) {
+    if (!isDragging || !currentDraggedWindow) return;
+    
+    e.preventDefault();
+    
+    const x = e.clientX - dragOffsetX;
+    const y = e.clientY - dragOffsetY;
+    
+    // Constrain window to viewport
+    const maxX = window.innerWidth - currentDraggedWindow.offsetWidth;
+    const maxY = window.innerHeight - currentDraggedWindow.offsetHeight;
+    
+    currentDraggedWindow.style.left = Math.max(0, Math.min(x, maxX)) + 'px';
+    currentDraggedWindow.style.top = Math.max(0, Math.min(y, maxY)) + 'px';
+  }
+  
+  // Stop dragging
+  function stopDrag() {
+    if (!isDragging) return;
+    
+    isDragging = false;
+    if (currentDraggedWindow) {
+      currentDraggedWindow.style.cursor = 'default';
+      currentDraggedWindow = null;
+    }
+  }
+  
+  // Attempt to login
+  function attemptLogin() {
+    if (passwordInput.value === SYSTEM_PASSWORD) {
+      loginMessage.textContent = "Access granted!";
+      loginMessage.style.color = "var(--green)";
+      
+      // Hide lock screen and show desktop after a delay
+      setTimeout(() => {
+        lockScreen.style.display = "none";
+        desktop.style.display = "block";
+        setTimeout(() => {
+          desktop.style.opacity = "1";
+        }, 100);
+      }, 1000);
+    } else {
+      loginMessage.textContent = "Incorrect passcode. Try again.";
+      loginMessage.style.color = "var(--red)";
+      passwordInput.value = "";
+      passwordInput.focus();
+      
+      // Shake animation for wrong password
+      lockScreen.style.animation = "shake 0.5s";
+      setTimeout(() => {
+        lockScreen.style.animation = "";
+      }, 500);
+    }
+  }
+  
+  // Open a window
+  function openWindow(windowId) {
+    const window = document.getElementById(windowId);
+    
+    // Close start menu if open
+    startMenu.classList.remove('active');
+    
+    // If window is minimized, restore it
+    if (window.classList.contains('minimized')) {
+      window.classList.remove('minimized');
+    }
+    
+    // Set z-index and activate window
+    bringToFront(windowId);
+    window.classList.add('active');
+    
+    // Add to taskbar if not already there
+    addToTaskbar(windowId);
+    
+    // Special initialization for specific windows
+    if (windowId === 'webcamWindow') {
+      initWebcam();
+    } else if (windowId === 'gameWindow') {
+      resetGame();
+    } else if (windowId === 'musicWindow' && isPlaying) {
+      // Update play icon if music is playing
+      document.getElementById('playIcon').classList.remove('fa-play');
+      document.getElementById('playIcon').classList.add('fa-pause');
+    }
+  }
+  
+  // Bring window to front
+  function bringToFront(windowId) {
+    const window = document.getElementById(windowId);
+    
+    zIndexCounter++;
+    window.style.zIndex = zIndexCounter;
+    
+    // Update active windows stack
+    activeWindows = activeWindows.filter(id => id !== windowId);
+    activeWindows.push(windowId);
+  }
+  
+  // Close a window
+  function closeWindow(windowId) {
+    const window = document.getElementById(windowId);
+    window.classList.remove('active');
+    
+    // Remove from taskbar
+    removeFromTaskbar(windowId);
+    
+    // Special cleanup for specific windows
+    if (windowId === 'webcamWindow') {
+      stopWebcam();
+    }
+  }
+  
+  // Minimize a window
+  function minimizeWindow(windowId) {
+    const window = document.getElementById(windowId);
+    window.classList.add('minimized');
+  }
+  
+  // Maximize/restore a window
+  function maximizeWindow(windowId) {
+    const window = document.getElementById(windowId);
+    window.classList.toggle('maximized');
+    
+    // Update maximize button text
+    const maximizeBtn = window.querySelector('.maximize-btn');
+    maximizeBtn.textContent = window.classList.contains('maximized') ? '❐' : '□';
+  }
+  
+  // Add window to taskbar
+  function addToTaskbar(windowId) {
+    // Check if already in taskbar
+    if (document.getElementById(`taskbar-${windowId}`)) return;
+    
+    const window = document.getElementById(windowId);
+    const title = window.querySelector('.title').textContent;
+    const iconClass = getWindowIconClass(windowId);
+    
+    const taskbarApp = document.createElement('div');
+    taskbarApp.className = 'taskbar-app';
+    taskbarApp.id = `taskbar-${windowId}`;
+    taskbarApp.innerHTML = `
+      <i class="${iconClass}"></i>
+      <span>${title.split(' - ')[0]}</span>
+    `;
+    
+    taskbarApp.onclick = () => {
+      if (window.classList.contains('minimized')) {
+        openWindow(windowId);
+      } else {
+        minimizeWindow(windowId);
+      }
+    };
+    
+    taskbarApps.appendChild(taskbarApp);
+  }
+  
+  // Remove window from taskbar
+  function removeFromTaskbar(windowId) {
+    const taskbarApp = document.getElementById(`taskbar-${windowId}`);
+    if (taskbarApp) {
+      taskbarApp.remove();
+    }
+  }
+  
+  // Get icon class for window
+  function getWindowIconClass(windowId) {
+    switch(windowId) {
+      case 'musicWindow': return 'fas fa-music';
+      case 'galleryWindow': return 'fas fa-image';
+      case 'chatWindow': return 'fas fa-comment-alt';
+      case 'notesWindow': return 'fas fa-sticky-note';
+      case 'webcamWindow': return 'fas fa-camera';
+      case 'gameWindow': return 'fas fa-gamepad';
+      case 'socialWindow': return 'fas fa-heart';
+      default: return 'fas fa-window';
+    }
+  }
+  
+  // Toggle start menu
+  function toggleStartMenu() {
+    startMenu.classList.toggle('active');
+    
+    // Bring start menu to front
+    if (startMenu.classList.contains('active')) {
+      zIndexCounter++;
+      startMenu.style.zIndex = zIndexCounter;
+    }
+  }
+  
+  // Check gallery password
+  function checkGalleryPassword() {
+    const passwordInput = document.getElementById('galleryPassword');
+    const secretGallery = document.getElementById('secretGallery');
+    
+    if (passwordInput.value === GALLERY_PASSWORD) {
+      secretGallery.style.display = 'block';
+      passwordInput.value = '';
+      passwordInput.placeholder = 'Access granted!';
+    } else {
+      passwordInput.value = '';
+      passwordInput.placeholder = 'Wrong code! Try again.';
+    }
+  }
+  
+  // Lock secret gallery
+  function lockSecretGallery() {
+    const secretGallery = document.getElementById('secretGallery');
+    secretGallery.style.display = 'none';
+  }
+  
+  // Show image details in modal
+  function showImageDetails(title, date, caption) {
+    const modal = document.getElementById('imageModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalImage = document.getElementById('modalImage');
+    const modalDate = document.getElementById('modalDate');
+    const modalCaption = document.getElementById('modalCaption');
+    
+    modalTitle.textContent = title;
+    modalImage.src = event.target.src;
+    modalDate.textContent = date;
+    modalCaption.textContent = caption;
+    
+    modal.style.display = 'flex';
+    
+    // Bring modal to front
+    zIndexCounter++;
+    modal.style.zIndex = zIndexCounter;
+  }
+  
+  // Close modal
+  function closeModal() {
+    document.getElementById('imageModal').style.display = 'none';
+  }
+  
+  // Show note content
+  function showNote(noteId) {
+    // Hide all notes first
+    document.querySelectorAll('.note-content').forEach(note => {
+      note.style.display = 'none';
+    });
+    
+    // Show the selected note
+    document.getElementById(noteId).style.display = 'block';
+  }
+  
+  // Send message in chat
+  function sendMessage() {
+    const message = messageInput.value.trim();
+    if (message === '') return;
+    
+    // Add user message
+    addMessage(message, 'outgoing');
+    messageInput.value = '';
+    
+    // AI response after a delay
+    setTimeout(() => {
+      let response = generateAIResponse(message);
+      addMessage(response, 'incoming');
+      
+      // Auto-scroll to bottom
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 1000);
+  }
+  
+  // Add message to chat
+  function addMessage(text, type) {
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.innerHTML = `
+      <div class="message-content">
+        <p>${text}</p>
+        <div class="message-time">${timeStr}</div>
+      </div>
+    `;
+    
+    chatMessages.appendChild(messageDiv);
+    
+    // Auto-scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+  
+  // Generate AI response
+  function generateAIResponse(message) {
+    message = message.toLowerCase();
+    
+    // Responses about music
+    if (message.includes('music') || message.includes('song') || message.includes('track')) {
+      const musicResponses = [
+        "I've been working on some new tracks. Which one is your favorite?",
+        "The music scene in 2010 is so exciting right now!",
+        "I'm experimenting with some new sounds for my next project."
+      ];
+      return musicResponses[Math.floor(Math.random() * musicResponses.length)];
+    }
+    
+    if (message.includes('jaemin')) {
+      return "Jaemin and I have a complicated relationship, but we make great music together.";
+    }
+    
+    if (message.includes('kai')) {
+      return "Yes, Hoso?";
+    }
+    
+    if (message.includes('webcam') || message.includes('photo') || message.includes('picture')) {
+      return "I love taking photos with my webcam! Have you tried the new filters?";
+    }
+    
+    if (message.includes('gossip') || message.includes('rumor') || message.includes('tea')) {
+      return "Ugh, don't get me started on gossip. People on that app will make up anything for attention.";
+    }
+    
+    // General responses
+    if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
+      return "hi, how are u?";
+    }
+    
+    if (message.includes('how are you')) {
+      return "I'm doing well! Just working on some new music. How about you?";
+    }
+    
+    // Default response
+    const randomResponses = [
+      "That's interesting! Tell me more.",
+      "I've been really busy with my music lately.",
+      "What do you think about the new webcam filters? I just added them!",
+      "Have you tried taking photos with the webcam app? The overlay is really cool!",
+      "Sorry, I got distracted by a new song idea!",
+      "Ugh, fuck that.."
+    ];
+    
+    return randomResponses[Math.floor(Math.random() * randomResponses.length)];
+  }
+  
+  // Initialize webcam
+  function initWebcam() {
+    // Check if webcam is already active
+    if (videoStream) return;
+    
+    const video = document.getElementById('videoElement');
+    
+    // Check if browser supports getUserMedia
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      navigator.mediaDevices.getUserMedia({ video: true })
+        .then(function(stream) {
+          videoStream = stream;
+          video.srcObject = stream;
+          video.play();
+        })
+        .catch(function(error) {
+          console.error("Webcam error: ", error);
+          alert("Unable to access webcam. Please check permissions.");
+        });
+    } else {
+      alert("Your browser doesn't support webcam access.");
+    }
+  }
+  
+  // Stop webcam
+  function stopWebcam() {
+    if (videoStream) {
+      videoStream.getTracks().forEach(track => track.stop());
+      videoStream = null;
+      
+      const video = document.getElementById('videoElement');
+      video.srcObject = null;
+    }
+  }
+  
+  // Apply filter to webcam
+  function applyFilter(filter) {
+    const video = document.getElementById('videoElement');
+    currentFilter = filter;
+    
+    // Remove all filter classes
+    video.className = '';
+    
+    // Apply selected filter
+    if (filter !== 'none') {
+      video.classList.add(filter);
+    }
+    
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    event.target.classList.add('active');
+  }
+  
+  // Capture image from webcam
+  function captureImage() {
+    const video = document.getElementById('videoElement');
+    const canvas = document.getElementById('canvasElement');
+    const container = document.getElementById('canvasContainer');
+    const overlay = document.getElementById('webcamOverlay');
+    
+    // Set canvas dimensions to match video
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    
+    // Draw current video frame to canvas
+    const ctx = canvas.getContext('2d');
+    
+    // Apply the same filter as the video
+    switch(currentFilter) {
+      case 'grayscale':
+        ctx.filter = 'grayscale(100%)';
+        break;
+      case 'sepia':
+        ctx.filter = 'sepia(100%)';
+        break;
+      case 'invert':
+        ctx.filter = 'invert(100%)';
+        break;
+      case 'hue':
+        ctx.filter = 'hue-rotate(90deg)';
+        break;
+      default:
+        ctx.filter = 'none';
+    }
+    
+    // Draw the video frame
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    
+    // Draw the overlay
+    ctx.globalAlpha = 0.7; // Set transparency for overlay
+    ctx.drawImage(overlay, 0, 0, canvas.width, canvas.height);
+    ctx.globalAlpha = 1.0; // Reset transparency
+    
+    // Store the image data for saving
+    capturedImageData = canvas.toDataURL('image/png');
+    
+    // Show canvas container
+    container.style.display = 'block';
+  }
+  
+  // Handle image upload
+  function handleImageUpload() {
+    const fileInput = document.getElementById('uploadInput');
+    const file = fileInput.files[0];
+    
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.getElementById('canvasElement');
+          const container = document.getElementById('canvasContainer');
+          const overlay = document.getElementById('webcamOverlay');
+          
+          // Set canvas dimensions to match image
+          canvas.width = img.width;
+          canvas.height = img.height;
+          
+          // Draw image to canvas
+          const ctx = canvas.getContext('2d');
+          
+          // Apply the current filter
+          switch(currentFilter) {
+            case 'grayscale':
+              ctx.filter = 'grayscale(100%)';
+              break;
+            case 'sepia':
+              ctx.filter = 'sepia(100%)';
+              break;
+            case 'invert':
+              ctx.filter = 'invert(100%)';
+              break;
+            case 'hue':
+              ctx.filter = 'hue-rotate(90deg)';
+              break;
+            default:
+              ctx.filter = 'none';
+          }
+          
+          // Draw the uploaded image
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          
+          // Draw the overlay
+          ctx.globalAlpha = 0.7; // Set transparency for overlay
+          ctx.drawImage(overlay, 0, 0, canvas.width, canvas.height);
+          ctx.globalAlpha = 1.0; // Reset transparency
+          
+          // Store the image data for saving
+          capturedImageData = canvas.toDataURL('image/png');
+          
+          // Show canvas container
+          container.style.display = 'block';
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+  }
+  
+  // Download captured image
+  function downloadImage() {
+    if (!capturedImageData) return;
+    
+    const link = document.createElement('a');
+    link.download = 'hoso-webcam-' + new Date().toISOString().replace(/:/g, '-') + '.png';
+    link.href = capturedImageData;
+    link.click();
+  }
+  
+  // Save image to gallery
+  function saveToGallery() {
+    if (!capturedImageData) return;
+    
+    // Create a unique ID for the image
+    const imageId = 'webcam-photo-' + Date.now();
+    
+    // Save to localStorage
+    let webcamPhotos = JSON.parse(localStorage.getItem('webcamPhotos') || '{}');
+    webcamPhotos[imageId] = capturedImageData;
+    localStorage.setItem('webcamPhotos', JSON.stringify(webcamPhotos));
+    
+    // Add to gallery UI
+    addPhotoToGallery(imageId, capturedImageData);
+    
+    alert('Photo saved to gallery!');
+  }
+  
+  // Load webcam photos from localStorage
+  function loadWebcamPhotos() {
+    const webcamPhotos = JSON.parse(localStorage.getItem('webcamPhotos') || '{}');
+    
+    for (const [id, dataUrl] of Object.entries(webcamPhotos)) {
+      addPhotoToGallery(id, dataUrl);
+    }
+  }
+  
+  // Add photo to gallery UI
+  function addPhotoToGallery(id, dataUrl) {
+    const img = document.createElement('img');
+    img.src = dataUrl;
+    img.alt = "Webcam Photo";
+    img.onclick = function() {
+      showImageDetails('Webcam Photo', new Date().toLocaleDateString(), 'Taken with HOSO\'s webcam app');
+    };
+    
+    webcamGallery.appendChild(img);
+  }
+  
+  // Initialize game
+  function resetGame() {
+    currentPlayer = 'X';
+    gameBoard = ['', '', '', '', '', '', '', '', ''];
+    gameActive = true;
+    
+    document.getElementById('gameStatus').textContent = "Your turn (X)";
+    
+    // Clear board
+    document.querySelectorAll('.game-cell').forEach(cell => {
+      cell.textContent = '';
+    });
+  }
+  
+  // Make move in game
+  function makeMove(cellIndex) {
+    if (!gameActive || gameBoard[cellIndex] !== '') return;
+    
+    // Update board
+    gameBoard[cellIndex] = currentPlayer;
+    document.querySelectorAll('.game-cell')[cellIndex].textContent = currentPlayer;
+    
+    // Check for win or draw
+    if (checkWin()) {
+      document.getElementById('gameStatus').textContent = `${currentPlayer} wins!`;
+      gameActive = false;
+      return;
+    }
+    
+    if (checkDraw()) {
+      document.getElementById('gameStatus').textContent = "It's a draw!";
+      gameActive = false;
+      return;
+    }
+    
+    // Switch player
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    document.getElementById('gameStatus').textContent = `Player ${currentPlayer}'s turn`;
+  }
+  
+  // Check for win
+  function checkWin() {
+    const winPatterns = [
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], // rows
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], // columns
+      [0, 4, 8], [2, 4, 6]             // diagonals
+    ];
+    
+    return winPatterns.some(pattern => {
+      const [a, b, c] = pattern;
+      return gameBoard[a] && gameBoard[a] === gameBoard[b] && gameBoard[a] === gameBoard[c];
+    });
+  }
+  
+  // Check for draw
+  function checkDraw() {
+    return gameBoard.every(cell => cell !== '');
+  }
+  
+  // Initialize the system when page loads
+  window.onload = initSystem;
+  
+  // Close start menu when clicking outside
+  document.addEventListener('click', function(e) {
+    if (startMenu.classList.contains('active') && 
+        !e.target.closest('#startMenu') && 
+        !e.target.closest('.start-menu')) {
+      startMenu.classList.remove('active');
+    }
+  });
+</script>
+</body>
+</html>
